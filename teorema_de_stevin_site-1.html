@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teorema de Stevin • Desafio de Física</title>
+<style>
+:root{
+  --bg:#07111f; --card:#0d1b2d; --card2:#10243a; --text:#eef6ff;
+  --muted:#9fb2c8; --accent:#37b8ff; --accent2:#6ce0ff; --ok:#42d392; --bad:#ff647c;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:radial-gradient(circle at 50% -10%,#12395b 0,#07111f 48%,#040a12 100%);
+  color:var(--text); min-height:100vh;
+}
+nav{
+  position:sticky;top:0;z-index:10;display:flex;align-items:center;justify-content:space-between;
+  padding:15px 7%; background:rgba(5,13,24,.82);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,.08)
+}
+.logo{font-weight:800;letter-spacing:.08em;font-size:14px}
+nav a{color:var(--muted);text-decoration:none;margin-left:22px;font-size:14px}
+nav a:hover{color:#fff}
+main{max-width:1000px;margin:auto;padding:60px 22px 90px}
+.hero{text-align:center;padding:45px 0 35px}
+.kicker{color:var(--accent2);font-size:13px;font-weight:800;letter-spacing:.2em}
+h1{font-size:clamp(42px,8vw,76px);line-height:.95;margin:18px 0 15px}
+h1 span{color:var(--accent)}
+.subtitle{max-width:650px;margin:auto;color:var(--muted);font-size:18px;line-height:1.6}
+.actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+button,.btn{
+  border:0;border-radius:12px;padding:13px 20px;font-weight:800;cursor:pointer;
+  background:var(--accent);color:#02101c;transition:.2s; font-size:14px
+}
+button:hover,.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.secondary{background:#162a40;color:#dcecff;border:1px solid #27435e}
+section{margin-top:70px}
+.card{
+  background:linear-gradient(145deg,rgba(16,36,58,.96),rgba(8,23,39,.96));
+  border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:28px;
+  box-shadow:0 18px 55px rgba(0,0,0,.25)
+}
+.formula{text-align:center;font-size:clamp(32px,7vw,58px);font-weight:900;color:var(--accent2);margin:15px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:25px}
+.info{padding:20px;border-radius:16px;background:#09192b;border:1px solid #18334e}
+.info b{display:block;margin-bottom:7px}
+.info p{margin:0;color:var(--muted);line-height:1.5}
+.quiz h2,.game h2{margin-top:0}
+.question{font-size:20px;font-weight:800;line-height:1.45}
+.options{display:grid;gap:10px;margin-top:20px}
+.option{text-align:left;background:#10263d;color:#eaf5ff;border:1px solid #25445f}
+.option.correct{background:rgba(66,211,146,.16);border-color:var(--ok)}
+.option.wrong{background:rgba(255,100,124,.14);border-color:var(--bad)}
+.feedback{min-height:26px;margin-top:14px;font-weight:700}
+.score{text-align:right;color:var(--muted);font-size:14px}
+.progress{height:7px;background:#15283c;border-radius:99px;overflow:hidden;margin:12px 0 25px}
+.progress div{height:100%;background:var(--accent);width:0%;transition:.3s}
+.game-area{display:grid;grid-template-columns:1fr 1fr;gap:25px;align-items:center}
+.tank-wrap{display:flex;justify-content:center}
+.tank{
+  position:relative;width:260px;height:310px;border:4px solid #8eb8d7;border-top:0;
+  border-radius:0 0 25px 25px;overflow:hidden;background:rgba(0,0,0,.15)
+}
+.water{position:absolute;bottom:0;left:0;width:100%;height:72%;background:linear-gradient(#28bfff99,#0878d4cc)}
+.water:before{content:"";position:absolute;top:0;left:-20%;width:140%;height:18px;background:#70ddff77;border-radius:50%}
+.point{position:absolute;left:20px;bottom:70px;width:220px;border-top:2px dashed #fff}
+.point:after{content:"A";position:absolute;right:-18px;top:-11px;font-weight:900}
+.point.deep{bottom:150px}.point.deep:after{content:"B"}
+.depth-label{position:absolute;right:8px;bottom:105px;color:#fff;font-size:12px}
+.controls label{display:block;margin:17px 0 7px;color:var(--muted);font-size:13px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.result{font-size:22px;font-weight:900;margin-top:20px}
+footer{text-align:center;color:#6f849a;padding:30px;font-size:13px}
+@media(max-width:720px){.grid,.game-area{grid-template-columns:1fr}nav{padding:14px 5%}nav a{margin-left:10px}.hero{padding-top:30px}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">FÍSICA • STEVIN</div>
+  <div><a href="#inicio">Início</a><a href="#quiz">Quiz</a><a href="#minigame">Minigame</a></div>
+</nav>
+
+<main>
+<section class="hero" id="inicio">
+  <div class="kicker">FÍSICA • HIDROSTÁTICA</div>
+  <h1>Teorema<br><span>de Stevin.</span></h1>
+  <p class="subtitle">Quanto mais fundo você vai em um líquido, maior fica a pressão.<br>Descubra isso na prática respondendo ao desafio.</p>
+  <div class="actions">
+    <a class="btn" href="#quiz">COMEÇAR O QUIZ →</a>
+    <a class="btn secondary" href="#minigame">IR PARA O MINIGAME</a>
+  </div>
+</section>
+
+<section>
+  <div class="card">
+    <div class="formula">Δp = ρ · g · Δh</div>
+    <p class="subtitle">A relação fundamental do Teorema de Stevin</p>
+    <div class="grid">
+      <div class="info"><b>Ideia principal</b><p>Em um líquido em equilíbrio, a diferença de pressão entre dois pontos depende da densidade do líquido, da gravidade e da diferença de profundidade.</p></div>
+      <div class="info"><b>Profundidade</b><p>Quanto maior a diferença de profundidade entre dois pontos, maior pode ser a diferença de pressão.</p></div>
+      <div class="info"><b>Recipiente</b><p>A forma do recipiente não muda essa pressão em uma mesma profundidade.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="quiz" id="quiz">
+  <div class="card">
+    <div class="score" id="score">Questão 1 de 4 • Pontos: 0</div>
+    <div class="progress"><div id="bar"></div></div>
+    <h2>Desafio rápido</h2>
+    <div class="question" id="question"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="secondary" id="next" style="display:none">Próxima questão →</button>
+  </div>
+</section>
+
+<section class="game" id="minigame">
+  <div class="card">
+    <h2>Minigame • Pressão na água</h2>
+    <p style="color:var(--muted);line-height:1.6">Mude a profundidade e a densidade para observar como a diferença de pressão varia.</p>
+    <div class="game-area">
+      <div class="tank-wrap">
+        <div class="tank">
+          <div class="water" id="water"></div>
+          <div class="point"></div>
+          <div class="point deep"></div>
+        </div>
+      </div>
+      <div class="controls">
+        <label>Diferença de profundidade: <b id="hVal">2,0 m</b></label>
+        <input id="h" type="range" min="0.5" max="10" step="0.5" value="2">
+        <label>Densidade do líquido: <b id="rhoVal">1000 kg/m³</b></label>
+        <input id="rho" type="range" min="500" max="1500" step="50" value="1000">
+        <div class="result">Δp = <span id="pressure">19620</span> Pa</div>
+        <small style="color:var(--muted)">Considerando g = 9,81 m/s².</small>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer>Teorema de Stevin • Projeto de Física</footer>
+
+<script>
+const questions=[
+ {q:"Segundo o Teorema de Stevin, o que acontece com a pressão quando a profundidade aumenta?",o:["Diminui sempre","Aumenta","Fica igual em qualquer situação","Desaparece"],a:1},
+ {q:"Na expressão Δp = ρ · g · Δh, o símbolo ρ representa:",o:["A gravidade","A profundidade","A densidade do líquido","A pressão inicial"],a:2},
+ {q:"A diferença de pressão entre dois pontos depende de quais fatores?",o:["Apenas da forma do recipiente","Densidade, gravidade e diferença de profundidade","Somente da temperatura","Somente do volume"],a:1},
+ {q:"Em uma mesma profundidade, a forma do recipiente muda a pressão hidrostática?",o:["Sim, sempre","Somente em recipientes grandes","Não","Somente em recipientes fechados"],a:2}
+];
+let current=0,score=0,answered=false;
+const qEl=document.getElementById("question"), opts=document.getElementById("options"), fb=document.getElementById("feedback"), next=document.getElementById("next");
+function render(){
+ answered=false; fb.textContent=""; next.style.display="none";
+ const q=questions[current]; qEl.textContent=q.q; opts.innerHTML="";
+ document.getElementById("score").textContent=`Questão ${current+1} de ${questions.length} • Pontos: ${score}`;
+ document.getElementById("bar").style.width=(current/questions.length*100)+"%";
+ q.o.forEach((text,i)=>{
+  const b=document.createElement("button"); b.className="option"; b.textContent=text;
+  b.onclick=()=>answer(i); opts.appendChild(b);
+ });
+}
+function answer(i){
+ if(answered)return; answered=true;
+ const q=questions[current], buttons=[...opts.children];
+ buttons.forEach((b,n)=>{b.disabled=true;if(n===q.a)b.classList.add("correct");if(n===i&&i!==q.a)b.classList.add("wrong")});
+ if(i===q.a){score++;fb.textContent="✓ Correto!";fb.style.color="var(--ok)"}else{fb.textContent="✗ Quase! Revise a ideia principal.";fb.style.color="var(--bad)"}
+ next.style.display="inline-block"; next.textContent=current===questions.length-1?"Ver resultado":"Próxima questão →";
+}
+next.onclick=()=>{
+ if(current<questions.length-1){current++;render()}
+ else{
+  qEl.textContent=`Quiz concluído: ${score}/${questions.length} pontos!`;
+  opts.innerHTML=`<button class="option" onclick="current=0;score=0;render()">Refazer quiz</button>`;
+  fb.textContent=score===questions.length?"Mandou muito bem!":"Bom trabalho! Tente novamente para melhorar.";
+  fb.style.color="var(--accent2)"; next.style.display="none";
+  document.getElementById("bar").style.width="100%";
+ }
+};
+render();
+
+const h=document.getElementById("h"),rho=document.getElementById("rho");
+function calc(){
+ const hv=Number(h.value),rv=Number(rho.value),p=rv*9.81*hv;
+ document.getElementById("hVal").textContent=hv.toFixed(1).replace(".",",")+" m";
+ document.getElementById("rhoVal").textContent=rv+" kg/m³";
+ document.getElementById("pressure").textContent=Math.round(p).toLocaleString("pt-BR");
+ document.getElementById("water").style.height=Math.min(88,35+hv*5)+"%";
+}
+h.oninput=rho.oninput=calc; calc();
+</script>
+</body>
+</html>
